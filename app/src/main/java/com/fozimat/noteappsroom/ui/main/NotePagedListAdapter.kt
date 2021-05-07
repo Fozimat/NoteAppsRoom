@@ -1,45 +1,28 @@
 package com.fozimat.noteappsroom.ui.main
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.fozimat.noteappsroom.database.Note
 import com.fozimat.noteappsroom.databinding.ItemNoteBinding
-import com.fozimat.noteappsroom.helper.NoteDiffCallback
 
-class NoteAdapter internal constructor(private val activity: Activity) :
-    RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+class NotePagedListAdapter(private val activity: Activity) : PagedListAdapter<Note, NotePagedListAdapter.NoteViewHolder>(DIFF_CALLBACK) {
 
-    private val listNotes = ArrayList<Note>()
-
-    fun setListNotes(listNotes: List<Note>) {
-        val diffCallback = NoteDiffCallback(this.listNotes, listNotes)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-
-        this.listNotes.clear()
-        this.listNotes.addAll(listNotes)
-        diffResult.dispatchUpdatesTo(this)
-    }
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotePagedListAdapter.NoteViewHolder {
         val binding = ItemNoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return NoteViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        holder.bind(listNotes[position])
+        holder.bind(getItem(position) as Note)
     }
 
-    override fun getItemCount(): Int {
-        return listNotes.size
-    }
-
-    inner class NoteViewHolder(private val binding: ItemNoteBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class NoteViewHolder(private val binding: ItemNoteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(note: Note) {
             with(binding) {
                 tvItemTitle.text = note.title
@@ -55,4 +38,16 @@ class NoteAdapter internal constructor(private val activity: Activity) :
         }
     }
 
+    companion object {
+        private val DIFF_CALLBACK: DiffUtil.ItemCallback<Note> = object : DiffUtil.ItemCallback<Note>() {
+            override fun areItemsTheSame(oldNote: Note, newNote: Note): Boolean {
+                return oldNote.title == newNote.title && oldNote.description == newNote.description
+            }
+
+            @SuppressLint("DiffUtilEquals")
+            override fun areContentsTheSame(oldNote: Note, newNote: Note): Boolean {
+                return oldNote == newNote
+            }
+        }
+    }
 }

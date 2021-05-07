@@ -40,7 +40,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tv_item_desciption"
+                android:id="@+id/tv_item_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="start"
