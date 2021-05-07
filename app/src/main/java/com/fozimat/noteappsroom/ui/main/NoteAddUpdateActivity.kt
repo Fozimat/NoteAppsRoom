@@ -104,7 +104,7 @@ class NoteAddUpdateActivity : AppCompatActivity() {
                         note?.date = DateHelper.getCurrentDate()
                     }
                     noteAddUpdateViewModel.insert(note as Note)
-                    setResult(RESULT_ADD)
+                    setResult(RESULT_ADD, intent)
                     finish()
                 }
             }
